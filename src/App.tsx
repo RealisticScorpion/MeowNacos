@@ -156,12 +156,15 @@ export default function App() {
       try {
         const { getCurrentWindow } = await import("@tauri-apps/api/window");
         const appWindow = getCurrentWindow();
-        unlisten = await appWindow.onCloseRequested((event) => {
+        unlisten = await appWindow.onCloseRequested(async (event) => {
+          event.preventDefault();
           if (isDirtyRef.current) {
             const confirmClose = window.confirm("🐾 猫咪提示：您有未保存的修改，关闭程序将丢失修改，确定要退出吗？");
-            if (!confirmClose) {
-              event.preventDefault();
+            if (confirmClose) {
+              await appWindow.destroy();
             }
+          } else {
+            await appWindow.destroy();
           }
         });
       } catch (e) {

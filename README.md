@@ -1,130 +1,104 @@
 # MeowNacos (=•́ܫ•̀=)
 
+English | [简体中文](README.zh-CN.md)
+
 <p align="center">
-  <img src="public/cat_only.png" alt="MeowNacos Logo" width="160" height="160" />
+  <img src="public/cat_only.png" alt="MeowNacos Logo" width="140" height="140" />
 </p>
 
 <p align="center">
-  <strong>您的橘猫配置比对与归档管理助手，像小猫咪一样灵敏且温柔。</strong>
+  <strong>Your friendly orange cat config comparison & archive management assistant, sensitive and gentle.</strong>
 </p>
 
 <p align="center">
-  MeowNacos 是一款专为 <strong>Nacos 归档导出包（.zip）配置比对</strong> 打造的高颜值、高对比度桌面级 GUI 软件。基于最新的 <strong>Tauri v2 + React + TypeScript + 原生 Modern CSS</strong> 架构构建，兼具 Rust 的极致安全性能与现代化前端的精美交互设计。
+  <a href="LICENSE"><img src="https://img.shields.io/badge/License-Apache%202.0-blue.svg" alt="License" /></a>
+  <img src="https://img.shields.io/badge/Tauri-v2-orange.svg" alt="Tauri v2" />
+  <img src="https://img.shields.io/badge/React-v19-61dafb.svg" alt="React" />
+  <img src="https://img.shields.io/badge/TypeScript-v5-blue.svg" alt="TypeScript" />
+  <img src="https://img.shields.io/badge/Rust-2021-black.svg?logo=rust" alt="Rust" />
+  <img src="https://img.shields.io/badge/Platform-macOS%20%7C%20Windows-lightgrey.svg" alt="Platforms" />
 </p>
 
----
-
-## 🐾 核心特性 (Core Features)
-
-### 1. 📂 智能归档提取与目录恢复
-* **ZIP 自动解压**：直接读取 Nacos 导出的 ZIP 配置归档文件。
-* **目录结构重建**：优先读取 `.metadata.yml` 获取元信息；若压缩包内缺少该元数据文件，系统将根据 `<Group>/<DataId>` 自动智能恢复目录树与配置属性，保证高可用性。
-* **文件名长显示优化**：优化顶部 Base 和 Target 的名称显示，调大按钮的宽度上限，并支持弹性缩放防截断，再长的压缩包文件名也一目了然。
-
-### 2. ⚙️ 语义化排序比对 (Sorted Keys - 彻底消除乱序噪音)
-* **消除乱序差**：不同环境导出的配置文件（尤其是 YAML / JSON / Properties），即使数据完全一致，往往由于 Key 顺序被打乱而产生大量干扰 Diff。
-* **智能字典排序**：
-  * **YAML / JSON**：递归对所有 Map 的 Key 进行字母序重排，再作比对。
-  * **Properties**：按行解析为 key-value，剔除空行和注释，按 key 字典序重排比对。
-  * 同时也支持“原始文本对比”，为您还原文件本初的物理文本差异。
-
-### 3. 📝 在线编辑与原子级 ZIP 包安全回写
-* **多边直接修改**：不仅支持查看 Diff，还支持点击 `编辑 Base(A)` 或 `编辑 Target(B)` 选项卡直接在全屏文本编辑器中修改配置内容。
-* **原子级安全写回**：修改保存时，Rust 后端会采用临时文件重命名机制。先在 ZIP 同级生成临时 `.zip.tmp`，完成所有项的流式写入后，再原子覆盖原包，**绝对保证写入中途即使闪退断电，您的原 ZIP 包也不会损坏**。
-
-### 4. 🛡️ 完善的修改防丢失（isDirty）保护
-* **选项卡脏状态标记**：配置一旦被修改但尚未保存，选项卡头部会自动标记脏点 `●`。
-* **双层拦截机制**：
-  1. **切换拦截**：在有未保存修改时，切换左侧其他文件、重新导入包或点击“开始对比”，界面会弹出对话框确认，防止修改丢失。
-  2. **关闭拦截**：我们挂载并拦截了 Tauri 桌面的原生窗口关闭事件。有未保存内容时关闭程序，同样会弹出警告弹框，保护劳动成果。
-
-### 5. 🌗 高对比度明暗双主题与编程字体
-* **默认明亮主题**：打开软件默认为极简的明亮（Light）配色，同时支持右上角一键切换为科技感暗色（Dark）。
-* **高清晰度 Diff 色块**：
-  * **删除行（Left）**：暗色下为饱满的暗红底色，明色下为明晰的淡红底（高对比度深红字，`-`）。
-  * **新增行（Right）**：暗色下为深绿底色，明色下为淡绿底（高对比度深绿字，`+`）。
-* **开源等宽编程字体**：集成 Google Fonts，支持在 Diff 面板上方自由切换 **JetBrains Mono**、**Intel One Mono**、**Fira Code** 和 **Source Code Pro**。
-* **加宽行距**：折行行间距（line-height）设为舒适的 `1.65` 倍，错落有致，极易阅读。
-
-### 6. 🎨 JetBrains 新 IDE UI 交互体验
-* **边栏折叠隐藏**：点击左上角文件夹按钮，可以平滑折叠/展开文件列表，给 Diff 留出最大化的屏幕空间。
-* **选中左条高亮**：侧边栏选中文件采用经典的左侧垂直蓝色高亮指示条，美观大方。
-* **无级拖拽分割线**：双栏 Diff 中间的竖分割线支持鼠标直接左右按住拖拽调整比例（`15% ~ 85%`）。
-* **完全自适应伸缩**：底部采用高效 CSS Grid 分配比例（`min-width: 0`），拖拽中双栏实时弹性重排折行，零溢出报错。
-
-### 7. 🕒 最近对比历史记忆
-* 基于 `localStorage` 自动记录最近 5 次的对比配对记录（显示左右包名与时间戳），支持在开屏界面快速点击秒加载，免去重复导入文件的繁琐。
-
-### 8. 🇨🇳 原生系统菜单全面汉化与快捷键
-* **中文原生菜单**：macOS 和 Windows 平台上的系统原生菜单栏已实现全面中文化（文件、编辑、窗口、帮助）。
-* **多通道使用说明**：点击“帮助” -> “使用说明”菜单，或者直接在软件中按下快捷键 **`Cmd + Shift + H`** (Windows 上为 **`Ctrl + Shift + H`**)，或直接点击界面右上角“使用说明 🐾”按钮，都会调起极具猫咪风情、精美的毛玻璃使用说明模态框。
+MeowNacos is a beautiful, high-contrast desktop GUI application built for **Nacos configuration ZIP archive comparison**. Built with the latest **Tauri v2 + React + TypeScript + Modern CSS** architecture, it combines the extreme performance and safety of Rust with the clean, smooth interactions of modern frontend technologies.
 
 ---
 
-## 🍏 跨平台兼容与设计细节
+## ✨ Features
 
-* **抹平路径分隔符**：前端在文件名截取上自动过滤并兼容 Windows 的反斜杠 `\` 与 Unix 系统的正斜杠 `/`，保证在跨平台下文件名都能优雅展示。
-* **Squircle 卡片图标**：我们的应用桌面图标已依据 macOS 官方规范重制。图标为一个带圆角和半透明渐变阴影的白色 Squircle（超椭圆）卡片底座，中间放置 3D 拟物感橘猫抱箭头主体，边缘有舒适内边距，在 macOS Dock 栏显示时高级典雅，不贴边突兀。
-
----
-
-## 💻 平台适配与构建验证
-
-### 1. Tauri Native API 平台分支隔离
-* **macOS 适配**：在 macOS 下，利用 Rust 的 `#[cfg(target_os = "macos")]` 编译属性动态注入 Apple 专属菜单（“关于 MeowNacos”、“服务”、“隐藏”、“退出”等），并绑定 macOS 原生的 `Cmd + Shift + H` 快捷键，确保与系统操作逻辑一致。
-* **Windows/Linux 适配**：在 Windows 或 Linux 下编译时，会自动屏蔽苹果专属的应用菜单，仅保留“文件”、“编辑”、“窗口”、“帮助”，并自动将快捷键映射为 `Ctrl + Shift + H`，完美符合 Windows 操作系统原生窗口菜单交互标准。
-* **DPI 与窗口自适应**：在 Rust 启动生命周期（`setup` 阶段）中，通过 `monitor.scale_factor()` 动态获取物理显示器的 DPI 缩放率。动态计算出占当前屏幕宽度 80%、高度 60% 的逻辑分辨率并居中，防止在高分屏（如 Mac Retina 屏与 Windows 4K 屏）上出现界面过大或缩水，实现极致的跨平台视觉一致性。
-
-### 2. Release 构建包编译验证
-* 执行 `npm run tauri build` 时，Tauri CLI 会启动 Rust 编译器的发布版打包流程（开启 `lto` 链路时优化和最高级别 `opt-level = 3` 的速度优化，并剥离全部不必要的调试符号）。
-* 系统会自动读取重制后的 Squircle 透明投影 `icon.icns`（macOS 平台）或 `icon.ico`（Windows 平台），将其作为成品图标嵌入到打包生成的可执行二进制文件与安装包包体中。
+* **✨ Semantic Sorting Diff**: Recursively sorts YAML, JSON, and Properties keys alphabetically before comparison, completely eliminating out-of-order environment noises.
+* **📦 Smart Archive Extraction**: Auto-restores directory structures using Nacos `.metadata.yml` files, with a fallback pattern matching `<Group>/<DataId>` for metadata-less packages.
+* **📝 In-App Editor**: Native split-screen and full-screen text editors to directly modify base (A) and target (B) packages on the fly.
+* **💾 Atomic Safe Write-Back**: Stream-writes modifications using temporary files (`.zip.tmp`) and atomically overwrites the original archive, keeping files safe from crashes.
+* **🌙 Dark & Light Themes**: High-contrast dark and light modes with optimized colors and adjustable monospaced coding fonts (JetBrains Mono, Fira Code, Intel One Mono, etc.).
+* **📂 Advanced IDE Interactions**: Fluid folder tree collapsing, step-less dragging divider (`15% ~ 85%`), and fully adaptive layout configurations.
+* **🕒 Recent History Memory**: Automatically remembers the last 5 comparison pairs with timestamps for quick reload on startup.
+* **🖥️ Native OS Integration**: Multi-channel localizations (menus, shortcuts, dialogs) tailored for macOS and Windows, featuring automatic high-DPI window centering.
 
 ---
 
-## 💡 典型使用案例与场景说明
+## ❓ Why MeowNacos?
 
-### 场景一：微服务环境配置迁移与同步（DEV -> TEST -> PROD）
-* **痛点**：在把 Nacos 配置从开发环境发布到测试或生产环境时，传统的“人工复制”属性或“全量覆盖”非常危险，极易遗漏一些测试/生产专用的特定环境变量（如数据库地址或密钥）。
-* **解法**：分别从两个环境的 Nacos 控制台导出配置 ZIP 包，通过 MeowNacos 一键导入并点击 **开始比对**。左侧边栏即刻按【修改、新增、已删除、一致】自动对齐配置文件，让您可以在上线前以 Side-by-Side 的双栏弹性 Diff 视图秒级审阅任何一行改动，完美规避上线事故。
+When deploying microservices across environments (e.g., DEV, TEST, PROD), comparing and adjusting Nacos configuration files is frequent yet high-risk:
+- **Pain Point of Standard Diff Tools**: Exported Nacos archives often scramble the physical key order. Plain diff tools show countless false-positive diff lines where properties simply swapped places, obscuring real value modifications.
+- **Pain Point of Pack Management**: Adjusting small values in archives requires unzipping, editing, and zipping them back, which is error-prone and can easily break Nacos' import formats.
 
-### 场景二：消除打乱的 YAML 配置顺序噪音（字典重排比对）
-* **痛点**：Nacos 配置中心在配置项更新时，导出的 YAML 属性键（Key）位置常常会被完全打乱（例如有的工具按更新时间排序，有的是随机键顺序）。直接进行普通的文本差异 Diff，即使配置数据没变，也会显示出大量的乱序红绿行，程序员根本无法在浩如烟海的无用 Diff 中辨别出哪些是真实值修改。
-* **解法**：在 MeowNacos 中选中该 YAML/Properties，默认开启 **“语义排序对比”**。小橘猫会在 Rust 后端解析该配置为键值映射树，并递归地对所有 Key 进行字典重排序后输出并计算 Diff。无用的乱序差异将 100% 被消除，仅展示数值真正被修改了的属性行，排除 99% 的文本噪音。
+**MeowNacos solves this**: By sorting keys semantically in Rust memory and providing crash-safe atomic ZIP modifications, managing your configuration archives becomes as smooth as an orange cat grooming its fur.
 
-### 场景三：直接编辑与 ZIP 包原子写回
-* **痛点**：以往发现打包的配置包里有一些小毛病（例如某个 timeout 从 3000 误写成了 300）需要修补时，必须解压缩 ZIP 包，使用 VS Code 打开对应文件修改，保存后，再通过外部工具压缩。不仅操作链极长，而且经常由于压缩目录结构不对导致 Nacos 无法重新导入。
-* **解法**：在 MeowNacos 选中该文件，直接点击上方的 **编辑 Target** 选项卡。在等宽编程字体编辑器内修改完参数后，点击 **保存修改**。Rust 后端会通过多项流式写入和 `.tmp` 原子重命名覆盖，在完全不解压原 ZIP 的情况下直接把改动写入原 ZIP 压缩包，省时省力。
+💡 For detailed use cases, check out [Typical Use Cases 🐾](docs/use-cases.md).
 
 ---
 
-## 🛠️ 本地开发与构建指南
+## 🛠️ Installation & Getting Started
 
-### 1. 开发环境准备
-运行该项目需要您本地安装有以下工具链：
-* **Node.js** (v18+) 及 npm
-* **Rust 工具链** (rustc, cargo v1.75+)
-* *(macOS 需安装 Xcode 命令行工具，Windows 需安装 C++ 构建工具)*
+### Prerequisites
+- **Node.js** (v18 or higher)
+- **Rust Toolchain** (rustc, cargo v1.75 or higher)
 
-### 2. 初始化与本地运行
+### Setup & Local Development
 ```bash
-# 1. 克隆项目并进入根目录
-# 2. 安装前端依赖
+# 1. Clone the repository
+git clone https://github.com/huyue/MeowNacos.git
+cd MeowNacos
+
+# 2. Install dependencies
 npm install
 
-# 3. 运行开发联调模式（会自动拉起 React 开发服务和 Tauri 桌面窗口）
+# 3. Start development server (launches the React app & Tauri shell)
 npm run tauri dev
 ```
 
-### 3. 生成 Release 生产安装包
-如果您需要将软件打包成可独立分发的安装包（根据当前操作系统，macOS 下会输出 `.dmg`/`.app`，Windows 下会输出 `.msi`/`.exe`）：
+### Build Installers
+To build standalone distribution installers (`.dmg`/`.app` on macOS, `.msi`/`.exe` on Windows):
 ```bash
 npm run tauri build
 ```
-编译完成后的发布包会输出在以下路径下：
-* **macOS**: `src-tauri/target/release/bundle/dmg/tauri-app_0.1.0_x64.dmg` 和 `src-tauri/target/release/bundle/macos/tauri-app.app`
-* **Windows**: `src-tauri/target/release/bundle/msi/tauri-app_0.1.0_x64_en-US.msi`
+For deep-dive compilation and OS branch isolation details, check out [Architecture & Adaptation ⚙️](docs/architecture.md).
 
 ---
 
-## (=•́ܫ•̀=) 橘猫寄语
-> 祝您的系统稳定运行，无 Bug，无故障，配置次次一致，下班喵呜一声，轻松回家！🐾
+## 🗺️ Roadmap
+
+- [x] Tauri v2 & React 19 core desktop framework
+- [x] YAML / JSON / Properties alphabetical sorting comparison
+- [x] Direct archive file editing & atomic safe write-back
+- [x] Multi-platform translated native menus & system shortcuts
+- [ ] Add semantic sorting for XML / TOML / INI configuration files
+- [ ] Export diff difference reports in HTML or Markdown format
+- [ ] Direct Nacos Server connection for online sync & remote diffs
+
+---
+
+## 🤝 Contributing
+
+We highly appreciate contributions! Please read [CONTRIBUTING.md](CONTRIBUTING.md) to learn how to open issues, make pull requests, and follow code styling conventions.
+
+---
+
+## 📄 License
+
+This project is licensed under the **[Apache License 2.0](LICENSE)**.
+
+---
+
+## (=•́ܫ•̀=) Orange Cat Wish
+> May your systems run stably with no bugs, no outages, and perfectly matched configurations. Meow out loud at the end of the day and go home relaxed! 🐾
